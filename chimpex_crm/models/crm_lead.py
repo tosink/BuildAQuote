@@ -59,9 +59,12 @@ class CRMLead(models.Model):
         raise Warning('Bills have already been generated!')
 
 
-class CRMBill(models.Model):
+class CRMLeadBill(models.Model):
     _name = 'crm.lead.bill'
     _description = 'CRM Lead Bills'
+
+    name = fields.Char(
+        string='Bill')
 
     lead_id = fields.Many2one(
         comodel_name='crm.lead',
@@ -99,8 +102,14 @@ class CRMBill(models.Model):
     amount_paid = fields.Monetary(
         string='Amount Paid',
         currency_field='currency_id',
-        required=False)
+        compute='calculate_amounts',
+        store=False)
 
+    bill_balance = fields.Monetary(
+        string='Bill Balance',
+        currency_field='currency_id',
+        compute='calculate_amounts',
+        store=False)
 
     currency_id = fields.Many2one(
         comodel_name='res.currency',
@@ -111,23 +120,118 @@ class CRMBill(models.Model):
         string='Due Date',
         required=True)
 
+    bill_payment_ids = fields.One2many(
+        comodel_name='crm.lead.bill.payment',
+        inverse_name='bill_id',
+        string='Bill Payments')
+
     state = fields.Selection(
         [('pending','Pending'),('partial', 'Partial'), ('paid','Paid')],
         string='Status', 
-        default='pending')
-    
+        compute='calculate_amounts',
+        default='pending',
+        store=False)
+
+
+    @api.model
+    def create(self, values):
+        bill = super(CRMLeadBill, self).create(values)
+        bill.name = bill.id
+        return bill
 
     @api.multi
-    def write(self, values):
-        bills = super(CRMBill, self).write(values)
+    def calculate_amounts(self):
         for bill in self:
-            amount_paid = values.get('amount_paid', 0)
+            amount_paid = 0
+            for payment in bill.bill_payment_ids:
+                amount_paid += payment.amount_to_pay
+            bill.amount_paid = amount_paid
+            bill.bill_balance = bill.payment_due - amount_paid
+            bill.state = 'pending'
             if amount_paid > 0:
                 if bill.payment_due == amount_paid:
-                    super(CRMBill, bill).write({'state':'paid'})
+                    bill.state = 'paid'
                 else:
-                    super(CRMBill, bill).write({'state':'partial'})
-            else:
-                super(CRMBill, bill).write({'state':'pending'})
-        return bills
+                    bill.state = 'partial'
+
+
+class CRMLeadBillPayment(models.Model):
+    _name = 'crm.lead.bill.payment'
+    _description = 'CRM Lead Bill Payment'
+
+    bill_id = fields.Many2one(
+        comodel_name='crm.lead.bill',
+        required=True)
+
+    currency_id = fields.Many2one(
+        related='bill_id.currency_id',
+        store=True)
+
+    transaction_code = fields.Char(
+        string='Transaction Code',
+        required=True)
+
+    name = fields.Char(
+        related='transaction_code',
+        store=True)
+
+    amount_to_pay = fields.Monetary(
+        string='Amount Paid',
+        currency_field='currency_id',
+        required=True)
+
+    payment_date = fields.Date(
+        string='Payment Date',
+        required=True)
+
+    # bill fields
+    lead_id = fields.Many2one(
+        related='bill_id.lead_id',
+        store=True)
+
+    customer_id = fields.Char(
+        related='bill_id.customer_id',
+        store=True)
+
+    partner_id = fields.Many2one(
+        related='bill_id.partner_id',
+        store=True)
+
+    dni_rnc = fields.Char(
+        related='bill_id.dni_rnc',
+        store=True)
+
+    planned_revenue = fields.Monetary(
+        related='bill_id.planned_revenue',
+        currency_field='currency_id',
+        store=True)
+
+    initial_advance = fields.Monetary(
+        related='bill_id.initial_advance',
+        currency_field='currency_id',
+        store=True)
+
+    payment_due = fields.Monetary(
+        related='bill_id.payment_due',
+        currency_field='currency_id',
+        store=True)
+
+    amount_paid = fields.Monetary(
+        related='bill_id.amount_paid',
+        currency_field='currency_id',
+        store=False)
+
+    bill_balance = fields.Monetary(
+        related='bill_id.bill_balance',
+        currency_field='currency_id',
+        store=False)
+
+    due_date = fields.Date(
+        related='bill_id.due_date',
+        store=True)
+
+    state = fields.Selection(
+        [('pending','Pending'),('partial', 'Partial'), ('paid','Paid')],
+        related='bill_id.state',
+        store=False)
 

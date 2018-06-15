@@ -26,6 +26,11 @@ class CRMLeadWizard(models.TransientModel):
         currency_field='currency_id',
         required=True)
 
+    down_payment = fields.Monetary(
+        string='Down Payment',
+        currency_field='currency_id',
+        required=True)
+
     currency_id = fields.Many2one(
         comodel_name='res.currency',
         string='Currency',
@@ -71,16 +76,29 @@ class CRMLeadWizard(models.TransientModel):
             amount = self.initial_advance / self.quote_amount
             counter = 0
             due_date = datetime.datetime.strptime(self.start_date, '%Y-%m-%d')
-            while (self.quote_amount > counter):
-                self.env['crm.lead.bill'].create({
-                    'lead_id':lead_id,
-                    'dni_rnc':self.dni_rnc,
-                    'planned_revenue':self.planned_revenue,
-                    'initial_advance':self.initial_advance,
-                    'currency_id':self.currency_id.id,
-                    'payment_due':amount,
-                    'due_date': due_date,
-                    })
+
+            while (self.quote_amount >= counter):
+                if counter == 0:
+                    self.env['crm.lead.bill'].create({
+                        'lead_id':lead_id,
+                        'dni_rnc':self.dni_rnc,
+                        'planned_revenue':self.planned_revenue,
+                        'initial_advance':self.initial_advance,
+                        'currency_id':self.currency_id.id,
+                        'payment_due':self.down_payment,
+                        'due_date': due_date,
+                        })
+
+                else:
+                    self.env['crm.lead.bill'].create({
+                        'lead_id':lead_id,
+                        'dni_rnc':self.dni_rnc,
+                        'planned_revenue':self.planned_revenue,
+                        'initial_advance':self.initial_advance,
+                        'currency_id':self.currency_id.id,
+                        'payment_due':amount,
+                        'due_date': due_date,
+                        })
                 if self.interval == 'month':
                     due_date = due_date + relativedelta(months=1)
                 else:

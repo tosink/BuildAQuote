@@ -18,14 +18,15 @@
             <xpath expr="//page[@name='lead']" position="after">
                 <page name="bills" string="Bills">
                     <field name="bill_ids">
-                        <tree colors="">
+                        <tree colors="red:state=='pending';blue:state='partial'">
                             <field name="id"/>
-                            <field name="dni_rnc" sum="Count"/>
+                            <field name="dni_rnc"/>
                             <field name="planned_revenue"/>
                             <field name="initial_advance"/>
                             <field name="payment_due" sum="Total Due Amount"/>
                             <field name="amount_paid" sum="Total Paid Amount"/>
-                            <field name="currency_id"/>
+                            <field name="bill_balance" sum="Total Bill Balance"/>
+                            <field name="currency_id" invisible="1"/>
                             <field name="due_date"/>
                             <field name="state"/>
                         </tree>
@@ -65,9 +66,22 @@
                         <field name="initial_advance"/>
                         <field name="payment_due"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
                         <field name="amount_paid"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        <field name="bill_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                         <field name="due_date"/>
                         <field name="currency_id" invisible="1"/>
                     </group>
+                    <notebook>
+                        <page name="payments" string="Payments">
+                            <field name="bill_payment_ids">
+                                <tree colors="red:state=='pending';blue:state='partial'">
+                                    <field name="bill_id"/>
+                                    <field name="transaction_code"/>
+                                    <field name="amount_to_pay"/>
+                                    <field name="payment_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -86,6 +100,7 @@
                 <field name="initial_advance"/>
                 <field name="payment_due"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 <field name="amount_paid"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="bill_balance"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 <field name="due_date"/>
                 <field name="state"/>
                 <field name="currency_id" invisible="1"/>
@@ -118,11 +133,111 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record model="ir.ui.view" id="chimpex_crm_lead_bill_payment_form_view">
+        <field name="name">chimpex.crm.lead.bill.payment.form</field>
+        <field name="model">crm.lead.bill.payment</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Bill Payments">
+                <header>
+                    <field name="state" widget="statusbar" clickable="False"/>
+                </header>
+                <sheet>
+                    <group col="4" colspan="4">
+                        <field name="bill_id"/>
+                        <field name="transaction_code"/>
+                        <field name="amount_to_pay"/>
+                        <field name="payment_date"/>
+                        <field name="lead_id" readonly="1"/>
+                        <field name="customer_id" readonly="1"/>
+                        <field name="partner_id" readonly="1"/>
+                        <field name="dni_rnc" readonly="1"/>
+                        <field name="planned_revenue" readonly="1"/>
+                        <field name="initial_advance" readonly="1"/>
+                        <field name="payment_due"  widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                        <field name="amount_paid"  widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                        <field name="bill_balance" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                        <field name="due_date" readonly="1"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="chimpex_crm_lead_bill_payment_tree_view">
+        <field name="name">chimpex.crm.lead.bill.payment.tree</field>
+        <field name="model">crm.lead.bill.payment</field>
+        <field name="arch" type="xml">
+            <tree string="Bill Payments">
+                <field name="bill_id"/>
+                <field name="transaction_code"/>
+                <field name="amount_to_pay"/>
+                <field name="payment_date"/>
+                <field name="lead_id"/>
+                <field name="customer_id"/>
+                <field name="partner_id"/>
+                <field name="dni_rnc"/>
+                <field name="planned_revenue"/>
+                <field name="initial_advance"/>
+                <field name="payment_due"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="amount_paid"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="bill_balance"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="due_date"/>
+                <field name="state"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="chimpex_crm_lead_bill_payment_search_view">
+        <field name="name">chimpex.crm.lead.bill.payment.search</field>
+        <field name="model">crm.lead.bill.payment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="bill_id"/>
+                <field name="transaction_code"/>
+                <field name="amount_to_pay"/>
+                <field name="amount_paid"/>
+                <field name="payment_date"/>
+                <field name="lead_id"/>
+                <field name="customer_id"/>
+                <field name="partner_id"/>
+                <field name="dni_rnc"/>
+                <group>
+                    <filter string="Bills" context="{'group_by':'bill_id'}"/>
+                    <filter string="Payment Date" context="{'group_by':'payment_date'}"/>
+                    <filter string="Due Date" context="{'group_by':'due_date'}"/>
+                    <filter string="Status" context="{'group_by':'state'}"/>
+                    <filter string="Customer" context="{'group_by':'customer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_chimpex_crm_lead_bill_payment">
+        <field name="name">Bill Payments</field>
+        <field name="res_model">crm.lead.bill.payment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem 
+        name="Bills" 
+        id="chimpex_crm_lead_bills_main_menu" 
+        parent="crm.crm_menu_root"/>
+
     <menuitem 
         name="Bills" 
         id="chimpex_crm_lead_bills_menu" 
-        parent="crm.crm_menu_root"
-        action="action_chimpex_crm_lead_bill" /> 
+        parent="chimpex_crm_lead_bills_main_menu"
+        action="action_chimpex_crm_lead_bill" />
+
+    <menuitem 
+        name="Payments"
+        id="chimpex_crm_lead_bill_payments_menu" 
+        parent="chimpex_crm_lead_bills_main_menu"
+        action="action_chimpex_crm_lead_bill_payment" /> 
 
 
  </odoo>

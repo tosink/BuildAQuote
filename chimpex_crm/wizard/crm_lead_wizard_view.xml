@@ -10,6 +10,7 @@
                         <field name="dni_rnc"/>
                         <field name="planned_revenue"/>
                         <field name="initial_advance"/>
+                        <field name="down_payment"/>
                         <field name="quote_amount"/>
                         <field name="start_date"/>
                         <field name="interval"/>
