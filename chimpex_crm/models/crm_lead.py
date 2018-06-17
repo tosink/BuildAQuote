@@ -101,15 +101,11 @@ class CRMLeadBill(models.Model):
 
     amount_paid = fields.Monetary(
         string='Amount Paid',
-        currency_field='currency_id',
-        compute='calculate_amounts',
-        store=False)
+        currency_field='currency_id')
 
     bill_balance = fields.Monetary(
         string='Bill Balance',
-        currency_field='currency_id',
-        compute='calculate_amounts',
-        store=False)
+        currency_field='currency_id')
 
     currency_id = fields.Many2one(
         comodel_name='res.currency',
@@ -128,9 +124,7 @@ class CRMLeadBill(models.Model):
     state = fields.Selection(
         [('pending','Pending'),('partial', 'Partial'), ('paid','Paid')],
         string='Status', 
-        compute='calculate_amounts',
-        default='pending',
-        store=False)
+        default='pending')
 
 
     @api.model
@@ -139,6 +133,7 @@ class CRMLeadBill(models.Model):
         bill.name = bill.id
         return bill
 
+    """
     @api.multi
     def calculate_amounts(self):
         for bill in self:
@@ -153,6 +148,7 @@ class CRMLeadBill(models.Model):
                     bill.state = 'paid'
                 else:
                     bill.state = 'partial'
+    """
 
 
 class CRMLeadBillPayment(models.Model):
@@ -161,6 +157,7 @@ class CRMLeadBillPayment(models.Model):
 
     bill_id = fields.Many2one(
         comodel_name='crm.lead.bill',
+        ondelete='cascade',
         required=True)
 
     currency_id = fields.Many2one(
@@ -233,5 +230,21 @@ class CRMLeadBillPayment(models.Model):
     state = fields.Selection(
         [('pending','Pending'),('partial', 'Partial'), ('paid','Paid')],
         related='bill_id.state',
-        store=False)
+        store=True)
 
+    @api.model
+    def create(self, values):
+        payment = super(CRMLeadBillPayment, self).create(values)
+        if payment:
+            amount_paid = payment.amount_to_pay
+            bill = self.env['crm.lead.bill'].browse(payment.bill_id.id)
+            bill.amount_paid = bill.amount_paid + amount_paid
+            bill.bill_balance = bill.payment_due - bill.amount_paid
+            bill.sate = 'pending'
+            if amount_paid > 0:
+                if bill.payment_due == bill.amount_paid:
+                    bill.state = 'paid'
+                else:
+                    bill.state = 'partial'
+        return payment
+        
