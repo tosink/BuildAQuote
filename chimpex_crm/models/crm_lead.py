@@ -242,7 +242,7 @@ class CRMLeadBillPayment(models.Model):
             bill.bill_balance = bill.payment_due - bill.amount_paid
             bill.sate = 'pending'
             if amount_paid > 0:
-                if bill.payment_due == bill.amount_paid:
+                if str(bill.payment_due) == str(bill.amount_paid):
                     bill.state = 'paid'
                 else:
                     bill.state = 'partial'
