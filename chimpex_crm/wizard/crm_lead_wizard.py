@@ -86,6 +86,7 @@ class CRMLeadWizard(models.TransientModel):
                         'initial_advance':self.initial_advance,
                         'currency_id':self.currency_id.id,
                         'payment_due':self.down_payment,
+                        'bill_balance': self.down_payment,
                         'due_date': due_date,
                         })
 
@@ -97,6 +98,7 @@ class CRMLeadWizard(models.TransientModel):
                         'initial_advance':self.initial_advance,
                         'currency_id':self.currency_id.id,
                         'payment_due':amount,
+                        'bill_balance': amount,
                         'due_date': due_date,
                         })
                 if self.interval == 'month':
