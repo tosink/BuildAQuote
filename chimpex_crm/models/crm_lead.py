@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# © 2018 Tosin Komolafe <http://tosinkomolafe.com>
+# © 2018 Intelligenti <http://www.intelligenti.io>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models, api, _
@@ -10,11 +10,11 @@ class CRMLead(models.Model):
     _inherit = 'crm.lead'
 
     customer_id = fields.Char(
-        string='Customer ID',
+        string='Id del Cliente',
         readonly=True)
 
     company_currency = fields.Many2one(
-        string='Currency',
+        string='Moneda',
         readonly=False,
         required=True,
         comodel_name='res.currency',
@@ -24,7 +24,7 @@ class CRMLead(models.Model):
     bill_ids = fields.One2many(
         comodel_name='crm.lead.bill',
         inverse_name='lead_id',
-        string='Bills')
+        string='Id de Factura')
 
     @api.model
     def create(self, values):
@@ -44,7 +44,7 @@ class CRMLead(models.Model):
     def generate_bills(self):
         if not self.bill_ids:
             return {
-                'name': 'Generate Bills',
+                'name': 'Generar Facturas',
                 'type': 'ir.actions.act_window',
                 'view_type': 'form',
                 'view_mode': 'form',
@@ -64,11 +64,11 @@ class CRMLeadBill(models.Model):
     _description = 'CRM Lead Bills'
 
     name = fields.Char(
-        string='Bill')
+        string='Facturas')
 
     lead_id = fields.Many2one(
         comodel_name='crm.lead',
-        string='CRM Lead',
+        string='Potencial Cliente',
         required=True,
         ondelete='cascade')
 
@@ -81,49 +81,49 @@ class CRMLeadBill(models.Model):
         store=True)
 
     dni_rnc = fields.Char(
-        string='DNI/RNC',
+        string=u'Cédula o RNC',
         required=True)
 
     planned_revenue = fields.Monetary(
-        string='Property Value', 
+        string='Valor de la Propiedad', 
         currency_field='currency_id',
         required=True)
 
     initial_advance = fields.Monetary(
-        string='Initial Advance',
+        string='Monto a Plazos',
         currency_field='currency_id',
         required=True)
 
     payment_due = fields.Monetary(
-        string='Payment Due',
+        string='Monto Adeudado',
         currency_field='currency_id',
         required=True)
 
     amount_paid = fields.Monetary(
-        string='Amount Paid',
+        string='Monto Pagado',
         currency_field='currency_id')
 
     bill_balance = fields.Monetary(
-        string='Bill Balance',
+        string='Balance Actual',
         currency_field='currency_id')
 
     currency_id = fields.Many2one(
         comodel_name='res.currency',
-        string='Currency',
+        string='Moneda',
         required=True)
 
     due_date = fields.Date(
-        string='Due Date',
+        string=u'Fecha Límite de Pago',
         required=True)
 
     bill_payment_ids = fields.One2many(
         comodel_name='crm.lead.bill.payment',
         inverse_name='bill_id',
-        string='Bill Payments')
+        string='Detalle de Pagos por Factura')
 
     state = fields.Selection(
         [('pending','Pending'),('partial', 'Partial'), ('paid','Paid')],
-        string='Status', 
+        string='Estado', 
         default='pending')
 
 
@@ -158,6 +158,7 @@ class CRMLeadBillPayment(models.Model):
     bill_id = fields.Many2one(
         comodel_name='crm.lead.bill',
         ondelete='cascade',
+        string='Id de Factura',
         required=True)
 
     currency_id = fields.Many2one(
@@ -165,7 +166,7 @@ class CRMLeadBillPayment(models.Model):
         store=True)
 
     transaction_code = fields.Char(
-        string='Transaction Code',
+        string=u'Código del Banco',
         required=True)
 
     name = fields.Char(
@@ -173,12 +174,12 @@ class CRMLeadBillPayment(models.Model):
         store=True)
 
     amount_to_pay = fields.Monetary(
-        string='Amount Paid',
+        string='Monto Pagado',
         currency_field='currency_id',
         required=True)
 
     payment_date = fields.Date(
-        string='Payment Date',
+        string='Fecha Límite de Pago',
         required=True)
 
     # bill fields

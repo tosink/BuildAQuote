@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# © 2018 Tosin Komolafe <http://tosinkomolafe.com>
+# © 2018 Intelligenti <http://www.intelligenti.io>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models, api, _
@@ -13,42 +13,42 @@ class CRMLeadWizard(models.TransientModel):
     _description = 'Chimpex CRM Lead Wizard'
 
     dni_rnc = fields.Char(
-        string='DNI/RNC',
+        string=u'Cédula o RNC',
         required=True)
 
     planned_revenue = fields.Monetary(
-        string='Property Value', 
+        string='Valor de la Propiedad', 
         currency_field='currency_id',
         required=True)
 
     initial_advance = fields.Monetary(
-        string='Initial Advance',
+        string='Monto a Plazos',
         currency_field='currency_id',
         required=True)
 
     down_payment = fields.Monetary(
-        string='Down Payment',
+        string='Cuota Inicial',
         currency_field='currency_id',
         required=True)
 
     currency_id = fields.Many2one(
         comodel_name='res.currency',
-        string='Currency',
+        string='Moneda',
         required=True)
 
     quote_amount = fields.Integer(
-        string='Amount of Quotes',
+        string='Cantidad de Cuotas',
         required=True, 
         default=1)
 
     start_date = fields.Date(
-        string='Starting Date',
+        string='Fecha de Inicio',
         required=True,
         default=datetime.datetime.today())
 
     interval = fields.Selection(
         [('month','Monthly'),('day', '15 Days')],
-        string='Periodicity',
+        string=u'Intérvalos',
         default='month',
         required=True)
 

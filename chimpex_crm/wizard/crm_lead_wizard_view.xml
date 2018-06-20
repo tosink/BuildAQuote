@@ -5,7 +5,7 @@
             <field name="name">chimpex.crm.lead.wizard.form</field>
             <field name="model">chimpex.crm.lead.wizard</field>
             <field name="arch" type="xml">
-                <form string="CRM Lead">
+                <form string="Datos del Potencial Cliente">
                     <group col="4" colspan="4">
                         <field name="dni_rnc"/>
                         <field name="planned_revenue"/>
@@ -17,8 +17,8 @@
                         <field name="currency_id" invisible="1"/>
                     </group>
                     <footer>
-                        <button string="Generate Bills" name="generate_bills" type="object" default_focus="1" class="btn-primary"/>
-                        <button string="Cancel" class="btn-default" special="cancel"/>
+                        <button string="Generar Facturas" name="generate_bills" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-default" special="cancel"/>
                     </footer>
                 </form>
             </field>

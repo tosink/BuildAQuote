@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
         <field name="arch" type="xml">
             <xpath expr="//header">
-                <button name="generate_bills" string="Generate Bills" type="object" class="oe_highlight o_wow" attrs="{'invisible': [('probability','&lt;',100)]}"/>
+                <button name="generate_bills" string="Generar Facturas" type="object" class="oe_highlight o_wow" attrs="{'invisible': [('probability','&lt;',100)]}"/>
             </xpath>
             <field name="name" position="after">
                 <span> - </span>
@@ -16,7 +16,7 @@
                 <field name="company_currency" class="oe_edit_only"/>
             </field>
             <xpath expr="//page[@name='lead']" position="after">
-                <page name="bills" string="Bills">
+                <page name="bills" string="Facturas">
                     <field name="bill_ids">
                         <tree colors="red:state=='pending';blue:state='partial'">
                             <field name="id"/>
@@ -52,7 +52,7 @@
         <field name="model">crm.lead.bill</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form string="Bills">
+            <form string="Facturas">
                 <header>
                     <field name="state" widget="statusbar" clickable="False"/>
                 </header>
@@ -71,7 +71,7 @@
                         <field name="currency_id" invisible="1"/>
                     </group>
                     <notebook>
-                        <page name="payments" string="Payments">
+                        <page name="payments" string="Pagos">
                             <field name="bill_payment_ids">
                                 <tree colors="red:state=='pending';blue:state='partial'">
                                     <field name="bill_id"/>
@@ -118,16 +118,16 @@
                 <field name="partner_id"/>
                 <field name="dni_rnc"/>
                 <group>
-                    <filter string="Due Date" context="{'group_by':'due_date'}"/>
-                    <filter string="Status" context="{'group_by':'state'}"/>
-                    <filter string="Customer" context="{'group_by':'customer_id'}"/>
+                    <filter string="Fecha Límite de Pago" context="{'group_by':'due_date'}"/>
+                    <filter string="Estado" context="{'group_by':'state'}"/>
+                    <filter string="Cliente" context="{'group_by':'customer_id'}"/>
                 </group>
             </search>
         </field>
     </record>
 
     <record model="ir.actions.act_window" id="action_chimpex_crm_lead_bill">
-        <field name="name">Bills</field>
+        <field name="name">Facturas</field>
         <field name="res_model">crm.lead.bill</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
@@ -138,7 +138,7 @@
         <field name="model">crm.lead.bill.payment</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
-            <form string="Bill Payments">
+            <form string="Pagos de Facturas">
                 <header>
                     <field name="state" widget="statusbar" clickable="False"/>
                 </header>
@@ -169,7 +169,7 @@
         <field name="name">chimpex.crm.lead.bill.payment.tree</field>
         <field name="model">crm.lead.bill.payment</field>
         <field name="arch" type="xml">
-            <tree string="Bill Payments">
+            <tree string="Pagos de Facturas">
                 <field name="bill_id"/>
                 <field name="transaction_code"/>
                 <field name="amount_to_pay"/>
@@ -205,39 +205,37 @@
                 <field name="partner_id"/>
                 <field name="dni_rnc"/>
                 <group>
-                    <filter string="Bills" context="{'group_by':'bill_id'}"/>
+                    <filter string="Facturas" context="{'group_by':'bill_id'}"/>
                     <filter string="Payment Date" context="{'group_by':'payment_date'}"/>
-                    <filter string="Due Date" context="{'group_by':'due_date'}"/>
-                    <filter string="Status" context="{'group_by':'state'}"/>
-                    <filter string="Customer" context="{'group_by':'customer_id'}"/>
+                    <filter string="Due Date " context="{'group_by':'due_date'}"/>
+                    <filter string="Estado" context="{'group_by':'state'}"/>
+                    <filter string="Cliente" context="{'group_by':'customer_id'}"/>
                 </group>
             </search>
         </field>
     </record>
 
     <record model="ir.actions.act_window" id="action_chimpex_crm_lead_bill_payment">
-        <field name="name">Bill Payments</field>
+        <field name="name">Pagos de Facturas</field>
         <field name="res_model">crm.lead.bill.payment</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
     <menuitem 
-        name="Bills" 
+        name="Facturas" 
         id="chimpex_crm_lead_bills_main_menu" 
         parent="crm.crm_menu_root"/>
 
     <menuitem 
-        name="Bills" 
+        name="Facturas" 
         id="chimpex_crm_lead_bills_menu" 
         parent="chimpex_crm_lead_bills_main_menu"
         action="action_chimpex_crm_lead_bill" />
 
     <menuitem 
-        name="Payments"
+        name="Pagos"
         id="chimpex_crm_lead_bill_payments_menu" 
         parent="chimpex_crm_lead_bills_main_menu"
-        action="action_chimpex_crm_lead_bill_payment" /> 
-
-
+        action="action_chimpex_crm_lead_bill_payment" />
  </odoo>
