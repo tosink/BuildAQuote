@@ -47,7 +47,7 @@ class CRMLeadWizard(models.TransientModel):
         default=datetime.datetime.today())
 
     interval = fields.Selection(
-        [('month','Monthly'),('day', '15 Days')],
+        [('month','Mensual'),('day', u'15 días')],
         string=u'Intérvalos',
         default='month',
         required=True)
@@ -108,7 +108,7 @@ class CRMLeadWizard(models.TransientModel):
                 counter += 1
 
         else:
-            return ValidationError('Amount must be greater an zero!')
+            return ValidationError(u'Cantidad debe ser mayor a 0')
 
         return
 

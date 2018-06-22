@@ -17,7 +17,9 @@
     'depends': [
         'crm',
     ],
-    'data': ['wizard/crm_lead_wizard_view.xml',
-             'views/crm_lead_view.xml', 
+    'data': ['security/crm_security.xml',
+             'security/ir.model.access.csv',
+             'wizard/crm_lead_wizard_view.xml',
+             'views/crm_lead_view.xml',
             ],
 }

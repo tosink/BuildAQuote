@@ -122,7 +122,7 @@ class CRMLeadBill(models.Model):
         string='Detalle de Pagos por Factura')
 
     state = fields.Selection(
-        [('pending','Pending'),('partial', 'Partial'), ('paid','Paid')],
+        [('pending','Pendiente'),('partial', 'Parcial'), ('paid','Pagado')],
         string='Estado', 
         default='pending')
 
@@ -179,7 +179,7 @@ class CRMLeadBillPayment(models.Model):
         required=True)
 
     payment_date = fields.Date(
-        string='Fecha Límite de Pago',
+        string='Fecha de Pago',
         required=True)
 
     # bill fields
@@ -229,7 +229,7 @@ class CRMLeadBillPayment(models.Model):
         store=True)
 
     state = fields.Selection(
-        [('pending','Pending'),('partial', 'Partial'), ('paid','Paid')],
+        [('pending','Pendiente'),('partial', 'Parcial'), ('paid','Pagado')],
         related='bill_id.state',
         store=True)
 

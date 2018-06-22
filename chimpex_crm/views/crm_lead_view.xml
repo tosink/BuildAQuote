@@ -206,8 +206,8 @@
                 <field name="dni_rnc"/>
                 <group>
                     <filter string="Facturas" context="{'group_by':'bill_id'}"/>
-                    <filter string="Payment Date" context="{'group_by':'payment_date'}"/>
-                    <filter string="Due Date " context="{'group_by':'due_date'}"/>
+                    <filter string="Fecha de Pago" context="{'group_by':'payment_date'}"/>
+                    <filter string="Fecha Límite de Pago" context="{'group_by':'due_date'}"/>
                     <filter string="Estado" context="{'group_by':'state'}"/>
                     <filter string="Cliente" context="{'group_by':'customer_id'}"/>
                 </group>
