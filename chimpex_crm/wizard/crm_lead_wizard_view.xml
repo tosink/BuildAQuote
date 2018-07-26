@@ -11,11 +11,18 @@
                         <field name="planned_revenue"/>
                         <field name="initial_advance"/>
                         <field name="down_payment"/>
-                        <field name="quote_amount"/>
-                        <field name="start_date"/>
-                        <field name="interval"/>
+                        <field name="quote_amount" invisible="1"/>
+                        <field name="start_date" invisible="1"/>
+                        <field name="interval" invisible="1"/>
                         <field name="currency_id" invisible="1"/>
                     </group>
+                    <field name="lead_wizard_lines">
+                        <tree editable="bottom">
+                            <field name="amount"/>
+                            <field name="date"/>
+                            <field name="currency_id" invisible="1"/>
+                        </tree>
+                    </field>
                     <footer>
                         <button string="Generar Facturas" name="generate_bills" type="object" default_focus="1" class="btn-primary"/>
                         <button string="Cancelar" class="btn-default" special="cancel"/>

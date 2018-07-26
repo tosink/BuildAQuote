@@ -3,10 +3,10 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Chimpex CRM',
+    'name': 'Intelligenti CRM',
     'summary': '',
-    'description': 'Chimpex CRM',
-    'author': 'Intelligenti',
+    'description': 'Intelligenti CRM',
+    'author': 'Intelligenti.io',
     'category': 'Sales',
     'license': 'AGPL-3',
     'website': 'http://www.intelligenti.io',

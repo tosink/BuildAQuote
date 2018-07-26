@@ -6,7 +6,7 @@ from odoo import fields, models, api, _
 from lxml import etree
 import datetime
 from  dateutil.relativedelta import relativedelta
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, Warning
 
 class CRMLeadWizard(models.TransientModel):
     _name = 'chimpex.crm.lead.wizard'
@@ -52,8 +52,14 @@ class CRMLeadWizard(models.TransientModel):
         default='month',
         required=True)
 
+    lead_wizard_lines = fields.One2many(
+        comodel_name='chimpex.crm.lead.wizard.line',
+        inverse_name='lead_wizard_id',
+        string='Lead Wizard Lines'
+    )
 
-    @api.model
+
+    """@api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         result = super(CRMLeadWizard, self).fields_view_get(view_id=view_id,
                                                            view_type=view_type,
@@ -68,11 +74,29 @@ class CRMLeadWizard(models.TransientModel):
             update_fields = {}
             result['fields'].update(update_fields)
             result['arch'] = etree.tostring(view_obj)
-        return result
+        return result"""
 
     def generate_bills(self):
         lead_id = self._context.get('active_id')
-        if self.quote_amount > 0:
+        if self.lead_wizard_lines:
+            total_amount = sum(self.lead_wizard_lines.mapped('amount'))
+            if self.initial_advance != total_amount:
+                raise ValidationError(u'Total amount must be equal to initial advance')
+            for line in self.lead_wizard_lines:
+                self.env['crm.lead.bill'].create({
+                        'lead_id':lead_id,
+                        'dni_rnc':self.dni_rnc,
+                        'planned_revenue':self.planned_revenue,
+                        'initial_advance':self.initial_advance,
+                        'currency_id':self.currency_id.id,
+                        'payment_due':line.amount,
+                        'bill_balance': line.amount,
+                        'due_date': line.date,
+                        })
+        else:
+            raise ValidationError(u'Cantidad debe ser mayor a 0')
+
+            """
             amount = self.initial_advance / self.quote_amount
             counter = 0
             due_date = datetime.datetime.strptime(self.start_date, '%Y-%m-%d')
@@ -109,6 +133,27 @@ class CRMLeadWizard(models.TransientModel):
 
         else:
             return ValidationError(u'Cantidad debe ser mayor a 0')
-
+        """
         return
 
+class CRMLeadWizard(models.TransientModel):
+    _name = 'chimpex.crm.lead.wizard.line'
+    _description = 'Chimpex CRM Lead Wizard Lines'
+
+    amount = fields.Monetary(
+        string='Monto Adeudado',
+        currency_field='currency_id',
+        required=True
+    )
+    date = fields.Date(
+        string='Fecha Límite de Pago',
+        required=True
+    )
+    currency_id = fields.Many2one(
+        related='lead_wizard_id.currency_id'
+    )
+
+    lead_wizard_id = fields.Many2one(
+        comodel_name='chimpex.crm.lead.wizard',
+
+    )
