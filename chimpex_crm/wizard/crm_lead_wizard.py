@@ -81,7 +81,7 @@ class CRMLeadWizard(models.TransientModel):
         if self.lead_wizard_lines:
             total_amount = sum(self.lead_wizard_lines.mapped('amount'))
             if self.initial_advance != total_amount:
-                raise ValidationError(u'Total amount must be equal to initial advance')
+                raise ValidationError(u'El Total de las cuotas debe ser igual al total a financiar')
             for line in self.lead_wizard_lines:
                 self.env['crm.lead.bill'].create({
                         'lead_id':lead_id,
