@@ -59,6 +59,7 @@ class CRMLead(models.Model):
         raise Warning('Bills have already been generated!')
 
 
+
 class CRMLeadBill(models.Model):
     _name = 'crm.lead.bill'
     _description = 'CRM Lead Bills'
