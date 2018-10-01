@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//header">
                 <button name="generate_bills" string="Generar Facturas" type="object" class="oe_highlight o_wow" attrs="{'invisible': [('probability','&lt;',100)]}"/>
+                <button name="add_bill" string="Pago Extraordinario" type="object" class="oe_highlight o_wow" attrs="{'invisible': ['|', ('probability','&lt;',100),('bill_ids','=',False)]}"/>
             </xpath>
             <field name="name" position="after">
                 <span> - </span>

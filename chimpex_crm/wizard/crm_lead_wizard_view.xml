@@ -30,5 +30,23 @@
                 </form>
             </field>
         </record>
+
+        <record id="crm_lead_wizard_manual_view" model="ir.ui.view">
+            <field name="name">chimpex.crm.lead.wizard.manual.form</field>
+            <field name="model">chimpex.crm.lead.wizard.manual</field>
+            <field name="arch" type="xml">
+                <form string="Pago Extraordinario">
+                    <group col="4" colspan="4">
+                        <field name="amount"/>
+                        <field name="date"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button string="Pago Extraordinario" name="add_bill" type="object" default_focus="1" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
     </data>
 </odoo>

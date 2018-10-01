@@ -42,6 +42,7 @@ class CRMLead(models.Model):
 
     @api.multi
     def generate_bills(self):
+        self.ensure_one()
         if not self.bill_ids:
             return {
                 'name': 'Generar Facturas',
@@ -56,7 +57,28 @@ class CRMLead(models.Model):
                 'target': 'new',
                 'nodestroy': True,
             }
-        raise Warning('Bills have already been generated!')
+        raise Warning('La factura ha sido agregada al código del cliente en línea!')
+    
+    @api.multi
+    def add_bill(self):
+        self.ensure_one()
+        if self.bill_ids:
+            return {
+                'name': 'Generar Factura',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'chimpex.crm.lead.wizard.manual',
+                'view_id': self.env.ref("chimpex_crm.crm_lead_wizard_manual_view").id,
+                'context': {
+                    'default_currency_id':self.company_currency.id,
+                },
+                'target': 'new',
+                'nodestroy': True,
+            }
+            
+        raise Warning('No puedes agregar facturas antes de generar un plan de pago!')
+
 
 
 class CRMLeadBill(models.Model):

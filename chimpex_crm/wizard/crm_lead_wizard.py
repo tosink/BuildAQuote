@@ -146,7 +146,7 @@ class CRMLeadWizard(models.TransientModel):
         """
         return
 
-class CRMLeadWizard(models.TransientModel):
+class CRMLeadWizardLine(models.TransientModel):
     _name = 'chimpex.crm.lead.wizard.line'
     _description = 'Chimpex CRM Lead Wizard Lines'
 
@@ -167,3 +167,39 @@ class CRMLeadWizard(models.TransientModel):
         comodel_name='chimpex.crm.lead.wizard',
 
     )
+
+class CRMLeadWizardManual(models.TransientModel):
+    _name = 'chimpex.crm.lead.wizard.manual'
+    _description = 'Chimpex CRM Lead Wizard Manual'
+
+    amount = fields.Monetary(
+        string='Monto Adeudado',
+        currency_field='currency_id',
+        required=True
+    )
+
+    date = fields.Date(
+        string='Fecha Límite de Pago',
+        required=True
+    )
+
+    currency_id = fields.Many2one('res.currency', 
+    string='Currency',
+    default=lambda self: self.env.context.get('default_currency_id'))
+
+    def add_bill(self):
+        lead = self.env['crm.lead'].browse(self._context.get('active_id'))
+        bill = lead.bill_ids[-1]
+        print(bill)
+        print(self.amount)
+        print(self.date)
+        self.env['crm.lead.bill'].create({
+            'lead_id':lead.id,
+            'dni_rnc':bill.dni_rnc,
+            'planned_revenue':bill.planned_revenue,
+            'initial_advance':bill.initial_advance,
+            'currency_id':bill.currency_id.id,
+            'payment_due':self.amount,
+            'bill_balance': self.amount,
+            'due_date': self.date,
+            })
