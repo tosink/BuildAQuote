@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# © 2019 Intelligenti <http://www.intelligenti.io>
+# © 2019 Intelligenti <http://www.intelligenti.io> 
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models, api, _
